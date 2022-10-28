@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN apt update && apt install -y python3 && apt clean
+RUN apt-get update && apt-get install -y python3 && apt-get clean
 
 COPY app.py /opt/main.py
 
