@@ -14,6 +14,9 @@ services:
     working_dir: /var/www/
     volumes:
       - ./:/var/www/
+    depends_on:
+      - redis
+      - queue
     networks:
       - docker-laravel
 
@@ -34,7 +37,24 @@ services:
     image: redis:latest
     networks:
       - docker-laravel
-  
+
+  #queue 
+  queue: 
+    build:
+      args:
+        user: brunin
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    command: "php artisan queue:work"
+    depends_on:
+      - redis
+    volumes:
+      - ./:/var/www/
+    networks:
+      - docker-laravel
+
   #database mysql
   mysql:
     image: mysql:5.7.22
@@ -48,6 +68,8 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./.docker/mysql:/var/lib/mysql
+    networks:
+      - docker-laravel
 
 networks:
   docker-laravel:
